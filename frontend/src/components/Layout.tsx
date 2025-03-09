@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
     if (mailbox) {
       return {
         ...defaultProps,
-        title: `${mailbox} - ZMAIL临时邮箱`,
+        title: `ZMAIL-24小时匿名邮箱`,
         description: `查看 ${mailbox} 的临时邮箱收件箱，接收邮件，无需注册，保护您的隐私安全`,
       };
     }

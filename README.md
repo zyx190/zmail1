@@ -72,8 +72,9 @@ ZMAIL 由前端和后端两部分组成，需要分别部署：
     <li>连接您的GitHub账户并选择导入此仓库</li>
     <li>设置构建配置:
       <ul>
-        <li>构建命令: <code>cd frontend && yarn install && yarn run build</code></li>
-        <li>构建输出目录: <code>frontend/dist</code></li>
+        <li>构建命令: <code>yarn build</code></li>
+        <li>构建输出目录: <code>dist</code></li>
+        <li>根目录（高级）-> 路径: <code>frontend</code></li>
       </ul>
     </li>
     <li>配置环境变量:
@@ -100,7 +101,8 @@ ZMAIL 由前端和后端两部分组成，需要分别部署：
     <li>连接您的GitHub账户并选择导入此仓库</li>
     <li>设置构建配置:
       <ul>
-        <li>入口点: <code>worker/src/index.ts</code></li>
+        <li>部署命令: <code>yarn deploy</code></li>
+        <li>高级设置 -> 根目录: <code>/worker</code></li>
       </ul>
     </li>
     <li>配置D1数据库:

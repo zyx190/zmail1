@@ -1,16 +1,10 @@
-name = "temp-mail"
+name = "zmail-backend"
 main = "src/index.ts"
 
 # 打包配置
 minify = true # 生产环境压缩代码
 compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2025-03-01"
-
-# 启用 D1 数据库
-[[d1_databases]]
-binding = "DB"
-database_name = "tempmail"
-database_id = ""  # 需要替换为您的实际数据库 ID
 
 # 配置邮件处理
 [triggers]
