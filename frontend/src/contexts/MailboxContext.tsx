@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { 
   createRandomMailbox, 
   getMailboxFromLocalStorage, 
@@ -6,7 +6,6 @@ import {
   removeMailboxFromLocalStorage,
   getEmails
 } from '../utils/api';
-import { useToast } from '../components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_AUTO_REFRESH, AUTO_REFRESH_INTERVAL } from '../config';
 
@@ -38,6 +37,8 @@ interface MailboxContextType {
   addToEmailCache: (emailId: string, email: Email, attachments: any[]) => void;
   clearEmailCache: () => void;
   handleMailboxNotFound: () => Promise<void>;
+  errorMessage: string | null;
+  successMessage: string | null;
 }
 
 export const MailboxContext = createContext<MailboxContextType>({
@@ -58,7 +59,9 @@ export const MailboxContext = createContext<MailboxContextType>({
   emailCache: {},
   addToEmailCache: () => {},
   clearEmailCache: () => {},
-  handleMailboxNotFound: async () => {}
+  handleMailboxNotFound: async () => {},
+  errorMessage: null,
+  successMessage: null
 });
 
 interface MailboxProviderProps {
@@ -67,7 +70,6 @@ interface MailboxProviderProps {
 
 export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const [mailbox, setMailbox] = useState<Mailbox | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [emails, setEmails] = useState<Email[]>([]);
@@ -75,6 +77,22 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   const [isEmailsLoading, setIsEmailsLoading] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(DEFAULT_AUTO_REFRESH);
   const [emailCache, setEmailCache] = useState<EmailCache>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const errorTimeoutRef = useRef<number | null>(null);
+  const successTimeoutRef = useRef<number | null>(null);
+  
+  // 清除提示的定时器
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) {
+        window.clearTimeout(errorTimeoutRef.current);
+      }
+      if (successTimeoutRef.current) {
+        window.clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // 初始化：检查本地存储或创建新邮箱
   useEffect(() => {
@@ -97,6 +115,10 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   // 创建新邮箱
   const createNewMailbox = async () => {
     try {
+      // 清除之前的错误和成功信息
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      
       console.log('createNewMailbox: Started');
       setIsLoading(true);
       
@@ -110,11 +132,15 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
         saveMailboxToLocalStorage(result.mailbox);
       } else {
         console.error('createNewMailbox: Failed to create mailbox:', result.error);
-        toast({
-          title: t('errors.generic'),
-          description: t('mailbox.createFailed'),
-          variant: 'destructive',
-        });
+        setErrorMessage(t('mailbox.createFailed'));
+        
+        // 3秒后清除错误信息
+        if (errorTimeoutRef.current) {
+          window.clearTimeout(errorTimeoutRef.current);
+        }
+        errorTimeoutRef.current = window.setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
         throw new Error('Failed to create mailbox');
       }
     } catch (error) {
@@ -187,10 +213,11 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   // 处理邮箱不存在的情况
   const handleMailboxNotFound = async () => {
     try {
-      toast({
-        title: t('mailbox.notFound'),
-        description: t('mailbox.creatingNew'),
-      });
+      // 清除之前的错误和成功信息
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      
+      setSuccessMessage(t('mailbox.creatingNew'));
       
       // 清除当前邮箱信息
       setMailbox(null);
@@ -259,7 +286,8 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
     try {
       const mailboxAddress = mailbox?.address;
       if (mailboxAddress) {
-        localStorage.removeItem(`emailCache_${mailboxAddress}`);
+        const cacheKey = `emailCache_${mailboxAddress}`;
+        localStorage.removeItem(cacheKey);
       }
     } catch (error) {
       console.error('Error clearing email cache from localStorage:', error);
@@ -268,42 +296,26 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   
   // 从localStorage加载邮件缓存
   useEffect(() => {
-    if (mailbox?.address) {
-      try {
-        const cacheKey = `emailCache_${mailbox.address}`;
-        const savedCache = localStorage.getItem(cacheKey);
-        if (savedCache) {
-          const parsedCache = JSON.parse(savedCache);
-          setEmailCache(parsedCache);
-        }
-      } catch (error) {
-        console.error('Error loading email cache from localStorage:', error);
+    if (!mailbox) return;
+    
+    try {
+      const cacheKey = `emailCache_${mailbox.address}`;
+      const cachedData = localStorage.getItem(cacheKey);
+      
+      if (cachedData) {
+        const parsedCache = JSON.parse(cachedData);
+        setEmailCache(parsedCache);
       }
+    } catch (error) {
+      console.error('Error loading email cache from localStorage:', error);
     }
-  }, [mailbox?.address]);
+  }, [mailbox]);
   
-  // 当邮箱变更时，保存到本地存储
+  // 设置邮箱并保存到localStorage
   const handleSetMailbox = (newMailbox: Mailbox) => {
     setMailbox(newMailbox);
     saveMailboxToLocalStorage(newMailbox);
-    setEmails([]);
-    setSelectedEmail(null);
-    // 清除旧邮箱的缓存
-    clearEmailCache();
   };
-  
-  // 保存自动刷新设置到本地存储
-  useEffect(() => {
-    localStorage.setItem('autoRefresh', String(autoRefresh));
-  }, [autoRefresh]);
-  
-  // 从本地存储加载自动刷新设置
-  useEffect(() => {
-    const savedAutoRefresh = localStorage.getItem('autoRefresh');
-    if (savedAutoRefresh !== null) {
-      setAutoRefresh(savedAutoRefresh === 'true');
-    }
-  }, []);
   
   return (
     <MailboxContext.Provider
@@ -325,9 +337,17 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
         emailCache,
         addToEmailCache,
         clearEmailCache,
-        handleMailboxNotFound
+        handleMailboxNotFound,
+        errorMessage,
+        successMessage
       }}
     >
+      {/* 错误和成功提示 */}
+      {(errorMessage || successMessage) && (
+        <div className="fixed top-4 right-4 z-50 p-3 rounded-md shadow-lg max-w-md" style={{ backgroundColor: errorMessage ? '#FEE2E2' : '#ECFDF5', color: errorMessage ? '#991B1B' : '#065F46' }}>
+          {errorMessage || successMessage}
+        </div>
+      )}
       {children}
     </MailboxContext.Provider>
   );

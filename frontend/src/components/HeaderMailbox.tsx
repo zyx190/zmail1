@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useToast } from './ui/use-toast';
 import { createRandomMailbox, createCustomMailbox } from '../utils/api';
 
 interface HeaderMailboxProps {
@@ -17,15 +16,19 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   isLoading
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customAddress, setCustomAddress] = useState('');
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [showCopyTooltip, setShowCopyTooltip] = useState(false);
+  const [copyError, setCopyError] = useState<string | null>(null);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
   const [customAddressError, setCustomAddressError] = useState<string | null>(null);
+  const [customAddressSuccess, setCustomAddressSuccess] = useState<string | null>(null);
   const [showRefreshSuccess, setShowRefreshSuccess] = useState(false);
   const copyTooltipTimeoutRef = useRef<number | null>(null);
   const refreshSuccessTimeoutRef = useRef<number | null>(null);
+  const successMessageTimeoutRef = useRef<number | null>(null);
+  const errorMessageTimeoutRef = useRef<number | null>(null);
   
   // 清除提示的定时器
   useEffect(() => {
@@ -36,6 +39,12 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
       if (refreshSuccessTimeoutRef.current) {
         window.clearTimeout(refreshSuccessTimeoutRef.current);
       }
+      if (successMessageTimeoutRef.current) {
+        window.clearTimeout(successMessageTimeoutRef.current);
+      }
+      if (errorMessageTimeoutRef.current) {
+        window.clearTimeout(errorMessageTimeoutRef.current);
+      }
     };
   }, []);
   
@@ -43,6 +52,9 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   
   // 复制邮箱地址到剪贴板
   const copyToClipboard = () => {
+    // 清除之前的错误信息
+    setCopyError(null);
+    
     const fullAddress = mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${domain}`;
     navigator.clipboard.writeText(fullAddress)
       .then(() => {
@@ -58,16 +70,24 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
         }, 2000);
       })
       .catch(() => {
-        toast({
-          title: t('errors.generic'),
-          description: t('mailbox.copyFailed'),
-          variant: 'destructive',
-        });
+        // 显示复制失败错误
+        setCopyError(t('mailbox.copyFailed'));
+        
+        // 3秒后隐藏错误
+        if (errorMessageTimeoutRef.current) {
+          window.clearTimeout(errorMessageTimeoutRef.current);
+        }
+        errorMessageTimeoutRef.current = window.setTimeout(() => {
+          setCopyError(null);
+        }, 3000);
       });
   };
   
   // 更换随机邮箱
   const handleRefreshMailbox = async () => {
+    // 清除之前的错误信息
+    setRefreshError(null);
+    
     setIsActionLoading(true);
     const result = await createRandomMailbox();
     setIsActionLoading(false);
@@ -86,11 +106,16 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
         setShowRefreshSuccess(false);
       }, 3000);
     } else {
-      toast({
-        title: t('errors.generic'),
-        description: t('mailbox.refreshFailed'),
-        variant: 'destructive',
-      });
+      // 显示刷新失败错误
+      setRefreshError(t('mailbox.refreshFailed'));
+      
+      // 3秒后隐藏错误
+      if (errorMessageTimeoutRef.current) {
+        window.clearTimeout(errorMessageTimeoutRef.current);
+      }
+      errorMessageTimeoutRef.current = window.setTimeout(() => {
+        setRefreshError(null);
+      }, 3000);
     }
   };
   
@@ -98,8 +123,9 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   const handleCreateCustom = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 清除之前的错误信息
+    // 清除之前的错误和成功信息
     setCustomAddressError(null);
+    setCustomAddressSuccess(null);
     
     if (!customAddress.trim()) {
       setCustomAddressError(t('mailbox.invalidAddress'));
@@ -112,12 +138,19 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
     
     if (result.success && result.mailbox) {
       onMailboxChange(result.mailbox);
-      setIsCustomMode(false);
-      setCustomAddress('');
-      toast({
-        title: t('common.success'),
-        description: t('mailbox.createSuccess'),
-      });
+      
+      // 显示成功消息在表单下方
+      setCustomAddressSuccess(t('mailbox.createSuccess'));
+      
+      // 3秒后自动关闭表单
+      if (successMessageTimeoutRef.current) {
+        window.clearTimeout(successMessageTimeoutRef.current);
+      }
+      successMessageTimeoutRef.current = window.setTimeout(() => {
+        setIsCustomMode(false);
+        setCustomAddress('');
+        setCustomAddressSuccess(null);
+      }, 3000);
     } else {
       // 检查错误信息是否包含"邮箱地址已存在"
       const isAddressExistsError = 
@@ -127,11 +160,7 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
       if (isAddressExistsError) {
         setCustomAddressError(t('mailbox.addressExists'));
       } else {
-        toast({
-          title: t('errors.generic'),
-          description: t('mailbox.createFailed'),
-          variant: 'destructive',
-        });
+        setCustomAddressError(t('mailbox.createFailed'));
       }
     }
   };
@@ -141,6 +170,7 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
     setIsCustomMode(false);
     setCustomAddress('');
     setCustomAddressError(null);
+    setCustomAddressSuccess(null);
   };
   
   // 移动设备上的邮箱地址显示
@@ -176,6 +206,7 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
                 onChange={(e) => {
                   setCustomAddress(e.target.value);
                   if (customAddressError) setCustomAddressError(null);
+                  if (customAddressSuccess) setCustomAddressSuccess(null);
                 }}
                 className={`w-32 md:w-40 px-2 py-1 text-sm border rounded-l-md focus:outline-none focus:ring-1 focus:ring-primary ${
                   customAddressError ? 'border-red-500' : ''
@@ -211,11 +242,18 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
               {customAddressError}
             </div>
           )}
+          
+          {/* 成功信息显示 */}
+          {customAddressSuccess && (
+            <div className="text-green-500 text-xs px-1">
+              {customAddressSuccess}
+            </div>
+          )}
         </form>
       ) : (
         <>
           {/* 桌面版显示 */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center flex-col">
             {/* 邮箱地址和操作按钮 */}
             <div className="flex items-center">
               <code className="px-3 py-1.5 text-sm font-medium">
@@ -269,10 +307,17 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
                 <i className="fas fa-edit text-sm"></i>
               </button>
             </div>
+            
+            {/* 错误信息显示 */}
+            {(copyError || refreshError) && (
+              <div className="text-red-500 text-xs mt-1">
+                {copyError || refreshError}
+              </div>
+            )}
           </div>
           
           {/* 移动版显示 */}
-          <div className="flex md:hidden items-center">
+          <div className="flex md:hidden items-center flex-col">
             {/* 邮箱地址和操作按钮 */}
             <div className="flex items-center">
               {renderMobileAddress()}
@@ -324,6 +369,13 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
                 <i className="fas fa-edit text-xs"></i>
               </button>
             </div>
+            
+            {/* 错误信息显示 */}
+            {(copyError || refreshError) && (
+              <div className="text-red-500 text-xs mt-1">
+                {copyError || refreshError}
+              </div>
+            )}
           </div>
         </>
       )}

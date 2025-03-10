@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useToast } from './ui/use-toast';
 
 interface MailboxInfoProps {
   mailbox: Mailbox;

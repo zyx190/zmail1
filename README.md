@@ -1,16 +1,20 @@
-# <div align="center">🚀 ZMAIL - 24小时匿名邮箱服务</div>
+# <div align="center">🚀 ZMAIL - 24-hour Anonymous Email Service</div>
 
 <div align="center">
+  <p>
+    <strong>English</strong> | <a href="./README.zh-CN.md">中文</a>
+  </p>
+
   <img src="frontend/public/favicon.svg" alt="ZMAIL Logo" width="120" height="120" style="background-color: #4f46e5; padding: 20px; border-radius: 12px; margin: 20px 0;">
   
-  <h3>💌 安全、简单、即用即走的临时邮箱服务</h3>
+  <h3>💌 Secure, Simple, Disposable Email Service</h3>
 
   <p>
-    <a href="https://mail.mdzz.uk" target="_blank"><strong>🌐 在线体验</strong></a> •
-    <a href="#功能特点"><strong>✨ 功能特点</strong></a> •
-    <a href="#快速部署"><strong>🚀 快速部署</strong></a> •
-    <a href="#本地开发"><strong>💻 本地开发</strong></a> •
-    <a href="#技术栈"><strong>🔧 技术栈</strong></a>
+    <a href="https://mail.mdzz.uk" target="_blank"><strong>🌐 Live Demo</strong></a> •
+    <a href="#features"><strong>✨ Features</strong></a> •
+    <a href="#quick-deployment"><strong>🚀 Deployment</strong></a> •
+    <a href="#local-development"><strong>💻 Development</strong></a> •
+    <a href="#tech-stack"><strong>🔧 Tech Stack</strong></a>
   </p>
   
   <div style="display: flex; gap: 10px; justify-content: center; margin: 25px 0;">
@@ -22,140 +26,140 @@
 
 ---
 
-## ✨ 功能特点
+## ✨ Features
 
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0;">
   <div>
-    <h4>✨ 即时创建</h4>
-    <p>无需注册，立即获得一个临时邮箱地址</p>
+    <h4>✨ Instant Creation</h4>
+    <p>Get a temporary email address instantly, no registration required</p>
   </div>
   <div>
-    <h4>🔒 隐私保护</h4>
-    <p>保护您的真实邮箱，避免垃圾邮件和信息泄露</p>
+    <h4>🔒 Privacy Protection</h4>
+    <p>Protect your real email from spam and data leaks</p>
   </div>
   <div>
-    <h4>⚡ 高速接收</h4>
-    <p>实时接收邮件，无需刷新页面</p>
+    <h4>⚡ Real-time Reception</h4>
+    <p>Receive emails in real-time without refreshing the page</p>
   </div>
   <div>
-    <h4>🌐 全球可用</h4>
-    <p>基于Cloudflare构建，全球边缘网络加速</p>
+    <h4>🌐 Global Availability</h4>
+    <p>Built on Cloudflare's global edge network for fast access worldwide</p>
   </div>
   <div>
-    <h4>🔄 自动刷新</h4>
-    <p>自动检查新邮件，确保不错过任何重要信息</p>
+    <h4>🔄 Auto-refresh</h4>
+    <p>Automatically check for new emails, never miss important messages</p>
   </div>
   <div>
-    <h4>📱 响应式设计</h4>
-    <p>完美适配各种设备，从手机到桌面</p>
+    <h4>📱 Responsive Design</h4>
+    <p>Perfect fit for all devices, from mobile to desktop</p>
   </div>
 </div>
 
 ---
 
-## 🚀 快速部署
+## 🚀 Quick Deployment
 
-ZMAIL 由前端和后端两部分组成，需要分别部署：
+ZMAIL consists of two parts that need to be deployed separately:
 
-### 🖥️ 前端部署步骤
+### 🖥️ Frontend Deployment
 
 <div align="center">
-  <h3>1️⃣ 部署前端到 Cloudflare Pages</h3>
+  <h3>1️⃣ Deploy Frontend to Cloudflare Pages</h3>
   <a href="https://dash.cloudflare.com/?to=/:account/pages/new/import-git" target="_blank">
-    <img src="https://img.shields.io/badge/部署前端到_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
+    <img src="https://img.shields.io/badge/Deploy_to_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
   </a>
 </div>
 
-<div style="background-color: #2d2d2d; padding: 15px; border-radius: 5px; margin: 15px 0;">
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
   <ol>
-    <li>点击"部署前端到 Cloudflare Pages"按钮</li>
-    <li>连接您的GitHub账户并选择导入此仓库</li>
-    <li>设置构建配置:
+    <li>Click the "Deploy to Cloudflare Pages" button</li>
+    <li>Connect your GitHub account and select this repository</li>
+    <li>Configure build settings:
       <ul>
-        <li>构建命令: <code>yarn build</code></li>
-        <li>构建输出目录: <code>dist</code></li>
-        <li>根目录（高级）-> 路径: <code>frontend</code></li>
+        <li>Build command: <code>yarn build</code></li>
+        <li>Build output directory: <code>dist</code></li>
+        <li>Root directory (Advanced) -> Path: <code>frontend</code></li>
       </ul>
     </li>
-    <li>配置环境变量:
+    <li>Configure environment variables:
       <ul>
-        <li><code>API_BASE_URL</code>: 您的Worker API基础URL (例如: <code>https://api.mdzz.uk</code>)</li>
+        <li><code>API_BASE_URL</code>: Your Worker API base URL (e.g., <code>https://api.mdzz.uk</code>)</li>
       </ul>
     </li>
-    <li>点击"保存并部署"</li>
+    <li>Click "Save and Deploy"</li>
   </ol>
 </div>
 
-### ⚙️ 后端部署步骤
+### ⚙️ Backend Deployment
 
 <div align="center">
-  <h3>2️⃣ 部署后端到 Cloudflare Workers</h3>
+  <h3>2️⃣ Deploy Backend to Cloudflare Workers</h3>
   <a href="https://dash.cloudflare.com/?to=/:account/workers/new" target="_blank">
-    <img src="https://img.shields.io/badge/部署后端到_Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Backend to Cloudflare Workers" width="300" />
+    <img src="https://img.shields.io/badge/Deploy_to_Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Backend to Cloudflare Workers" width="300" />
   </a>
 </div>
 
-<div style="background-color: #2d2d2d; padding: 15px; border-radius: 5px; margin: 15px 0;">
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
   <ol>
-    <li>点击"部署后端到 Cloudflare Workers"按钮</li>
-    <li>连接您的GitHub账户并选择导入此仓库</li>
-    <li>设置构建配置:
+    <li>Click the "Deploy to Cloudflare Workers" button</li>
+    <li>Connect your GitHub account and select this repository</li>
+    <li>Configure build settings:
       <ul>
-        <li>部署命令: <code>yarn deploy</code></li>
-        <li>高级设置 -> 根目录: <code>/worker</code></li>
+        <li>Deploy command: <code>yarn deploy</code></li>
+        <li>Advanced settings -> Root directory: <code>/worker</code></li>
       </ul>
     </li>
-    <li>配置D1数据库:
+    <li>Configure D1 database:
       <ul>
-        <li>创建一个D1数据库 (例如: <code>mail_db</code>)</li>
-        <li>将其绑定到您的Worker (绑定名称: <code>DB</code>)</li>
+        <li>Create a D1 database (e.g., <code>mail_db</code>)</li>
+        <li>Bind it to your Worker (binding name: <code>DB</code>)</li>
       </ul>
     </li>
-    <li>配置Email路由:
+    <li>Configure Email routing:
       <ul>
-        <li>在Cloudflare控制面板中设置Email路由，将邮件转发到您的Worker</li>
+        <li>Set up Email routing in the Cloudflare dashboard to forward emails to your Worker</li>
       </ul>
     </li>
-    <li>点击"部署"</li>
+    <li>Click "Deploy"</li>
   </ol>
 </div>
 
 ---
 
-## 💻 本地开发
+## 💻 Local Development
 
-### 🎨 前端开发
+### 🎨 Frontend Development
 
-<div style="background-color: #2d2d2d; padding: 15px; border-radius: 5px; margin: 15px 0;">
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
 
 ```bash
-# 进入前端目录
+# Navigate to frontend directory
 cd frontend
 
-# 安装依赖
+# Install dependencies
 yarn install
 
-# 启动开发服务器
+# Start development server
 yarn dev
 ```
 
 </div>
 
-### ⚙️ Worker开发
+### ⚙️ Worker Development
 
-<div style="background-color: #2d2d2d; padding: 15px; border-radius: 5px; margin: 15px 0;">
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
 
 ```bash
-# 进入worker目录
+# Navigate to worker directory
 cd worker
 
-# 安装依赖
+# Install dependencies
 yarn install
 
-# 构建预览
+# Build preview
 yarn build
 
-# 部署到 cloudflare
+# Deploy to Cloudflare
 yarn deploy
 ```
 
@@ -163,34 +167,34 @@ yarn deploy
 
 ---
 
-## 🔧 技术栈
+## 🔧 Tech Stack
 
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0;">
   <div>
-    <h3>🎨 前端</h3>
+    <h3>🎨 Frontend</h3>
     <ul>
-      <li><strong>React</strong> - 用户界面库</li>
-      <li><strong>TypeScript</strong> - 类型安全的JavaScript超集</li>
-      <li><strong>Tailwind CSS</strong> - 实用优先的CSS框架</li>
-      <li><strong>Vite</strong> - 现代前端构建工具</li>
+      <li><strong>React</strong> - UI library</li>
+      <li><strong>TypeScript</strong> - Type-safe JavaScript</li>
+      <li><strong>Tailwind CSS</strong> - Utility-first CSS framework</li>
+      <li><strong>Vite</strong> - Modern frontend build tool</li>
     </ul>
   </div>
   <div>
-    <h3>⚙️ 后端</h3>
+    <h3>⚙️ Backend</h3>
     <ul>
-      <li><strong>Cloudflare Workers</strong> - 边缘计算平台</li>
-      <li><strong>Cloudflare D1</strong> - 边缘SQL数据库</li>
-      <li><strong>Cloudflare Email Workers</strong> - 邮件处理服务</li>
+      <li><strong>Cloudflare Workers</strong> - Edge computing platform</li>
+      <li><strong>Cloudflare D1</strong> - Edge SQL database</li>
+      <li><strong>Cloudflare Email Workers</strong> - Email processing service</li>
     </ul>
   </div>
 </div>
 
 ---
 
-## 👥 贡献指南
+## 👥 Contributing
 
-欢迎提交Pull Request或Issue来改进这个项目！
+Contributions via Pull Requests or Issues are welcome!
 
-## 📄 许可证
+## 📄 License
 
 [MIT License](./LICENSE)

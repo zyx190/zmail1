@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import EmailList from '../components/EmailList';
 import EmailDetail from '../components/EmailDetail';
 import MailboxInfo from '../components/MailboxInfo';
-import { useToast } from '../components/ui/use-toast';
 import { API_BASE_URL } from '../config';
 import { MailboxContext } from '../contexts/MailboxContext';
 import { getEmails } from '../utils/api';
@@ -13,7 +12,6 @@ const MailboxPage: React.FC = () => {
   const { address } = useParams<{ address: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { handleMailboxNotFound } = useContext(MailboxContext);
   
   const [mailbox, setMailbox] = useState<Mailbox | null>(null);
@@ -21,6 +19,22 @@ const MailboxPage: React.FC = () => {
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const errorTimeoutRef = useRef<number | null>(null);
+  const successTimeoutRef = useRef<number | null>(null);
+  
+  // 清除提示的定时器
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) {
+        window.clearTimeout(errorTimeoutRef.current);
+      }
+      if (successTimeoutRef.current) {
+        window.clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // 获取邮箱信息
   useEffect(() => {
@@ -33,12 +47,15 @@ const MailboxPage: React.FC = () => {
         
         if (!response.ok) {
           if (response.status === 404) {
-            toast({
-              title: t('errors.notFound'),
-              description: t('mailbox.invalidAddress'),
-              variant: 'destructive',
-            });
-            navigate('/');
+            setErrorMessage(t('mailbox.invalidAddress'));
+            
+            // 3秒后导航到首页
+            if (errorTimeoutRef.current) {
+              window.clearTimeout(errorTimeoutRef.current);
+            }
+            errorTimeoutRef.current = window.setTimeout(() => {
+              navigate('/');
+            }, 3000);
             return;
           }
           throw new Error('Failed to fetch mailbox');
@@ -51,18 +68,22 @@ const MailboxPage: React.FC = () => {
           throw new Error(data.error || 'Unknown error');
         }
       } catch (error) {
-        toast({
-          title: t('errors.generic'),
-          description: String(error),
-          variant: 'destructive',
-        });
+        setErrorMessage(String(error));
+        
+        // 3秒后清除错误信息
+        if (errorTimeoutRef.current) {
+          window.clearTimeout(errorTimeoutRef.current);
+        }
+        errorTimeoutRef.current = window.setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchMailbox();
-  }, [address, navigate, t, toast]);
+  }, [address, navigate, t]);
   
   // 获取邮件列表
   useEffect(() => {
@@ -133,25 +154,40 @@ const MailboxPage: React.FC = () => {
       
       const data = await response.json();
       if (data.success) {
-        toast({
-          title: t('common.success'),
-          description: t('mailbox.deleteSuccess'),
-        });
-        navigate('/');
+        setSuccessMessage(t('mailbox.deleteSuccess'));
+        
+        // 2秒后导航到首页
+        if (successTimeoutRef.current) {
+          window.clearTimeout(successTimeoutRef.current);
+        }
+        successTimeoutRef.current = window.setTimeout(() => {
+          navigate('/');
+        }, 2000);
       } else {
         throw new Error(data.error || 'Unknown error');
       }
     } catch (error) {
-      toast({
-        title: t('errors.generic'),
-        description: t('mailbox.deleteFailed'),
-        variant: 'destructive',
-      });
+      setErrorMessage(t('mailbox.deleteFailed'));
+      
+      // 3秒后清除错误信息
+      if (errorTimeoutRef.current) {
+        window.clearTimeout(errorTimeoutRef.current);
+      }
+      errorTimeoutRef.current = window.setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   };
   
   return (
     <div className="flex flex-col space-y-6">
+      {/* 错误和成功提示 */}
+      {(errorMessage || successMessage) && (
+        <div className={`p-3 rounded-md ${errorMessage ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+          {errorMessage || successMessage}
+        </div>
+      )}
+      
       {mailbox && (
         <MailboxInfo 
           mailbox={mailbox} 

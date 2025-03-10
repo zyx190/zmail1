@@ -1,4 +1,3 @@
-import { useToast } from "../components/ui/use-toast";
 import { API_BASE_URL } from "../config";
 
 // API请求基础URL
