@@ -6,19 +6,21 @@ import EmailDetail from '../components/EmailDetail';
 import MailboxInfo from '../components/MailboxInfo';
 import { API_BASE_URL } from '../config';
 import { MailboxContext } from '../contexts/MailboxContext';
-import { getEmails } from '../utils/api';
 
 const MailboxPage: React.FC = () => {
   const { address } = useParams<{ address: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { handleMailboxNotFound } = useContext(MailboxContext);
+  const { 
+    emails, 
+    isEmailsLoading, 
+    autoRefresh, 
+    setAutoRefresh 
+  } = useContext(MailboxContext);
   
   const [mailbox, setMailbox] = useState<Mailbox | null>(null);
-  const [emails, setEmails] = useState<Email[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [autoRefresh, setAutoRefresh] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const errorTimeoutRef = useRef<number | null>(null);
@@ -84,60 +86,6 @@ const MailboxPage: React.FC = () => {
     
     fetchMailbox();
   }, [address, navigate, t]);
-  
-  // 获取邮件列表
-  useEffect(() => {
-    if (!address) return;
-    
-    const fetchEmails = async () => {
-      try {
-        console.log('MailboxPage: Fetching emails...');
-        const result = await getEmails(address);
-        console.log('MailboxPage: Fetch emails result:', result);
-        
-        if (result.success) {
-          setEmails(result.emails);
-        } else if (result.notFound) {
-          console.log('MailboxPage: Mailbox not found, calling handleMailboxNotFound...');
-          // 如果邮箱不存在，清除本地缓存并创建新邮箱
-          try {
-            if (typeof handleMailboxNotFound === 'function') {
-              console.log('MailboxPage: handleMailboxNotFound is a function, calling it...');
-              await handleMailboxNotFound();
-              console.log('MailboxPage: handleMailboxNotFound completed');
-            } else {
-              console.error('MailboxPage: handleMailboxNotFound is not a function:', handleMailboxNotFound);
-              // 如果handleMailboxNotFound不是函数，则直接导航到首页
-              navigate('/');
-            }
-          } catch (error) {
-            console.error('MailboxPage: Error in handleMailboxNotFound:', error);
-            // 出错时导航到首页
-            navigate('/');
-          }
-          return;
-        } else {
-          console.error('MailboxPage: Error fetching emails:', result.error);
-        }
-      } catch (error) {
-        console.error('MailboxPage: Error fetching emails:', error);
-      }
-    };
-    
-    fetchEmails();
-    
-    // 自动刷新
-    let intervalId: number | undefined;
-    if (autoRefresh) {
-      intervalId = window.setInterval(fetchEmails, 10000); // 每10秒刷新一次
-    }
-    
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [address, autoRefresh, handleMailboxNotFound, navigate]);
   
   // 处理删除邮箱
   const handleDeleteMailbox = async () => {

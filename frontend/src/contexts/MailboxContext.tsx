@@ -164,6 +164,9 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   const refreshEmails = async () => {
     if (!mailbox) return;
     
+    // 防止重复请求
+    if (isEmailsLoading) return;
+    
     setIsEmailsLoading(true);
     
     try {
@@ -190,6 +193,7 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
       }
     } catch (error) {
       // 错误处理
+      console.error('Error refreshing emails:', error);
     } finally {
       setIsEmailsLoading(false);
     }
@@ -197,16 +201,21 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   
   // 自动刷新邮件
   useEffect(() => {
-    if (!mailbox || !autoRefresh) return;
+    if (!mailbox) return;
     
-    // 首次加载邮件
+    // 首次加载邮件（无论autoRefresh是否开启）
     refreshEmails();
     
-    // 设置定时刷新
-    const intervalId = window.setInterval(refreshEmails, AUTO_REFRESH_INTERVAL);
+    // 如果自动刷新开启，则设置定时器
+    let intervalId: number | undefined;
+    if (autoRefresh) {
+      intervalId = window.setInterval(refreshEmails, AUTO_REFRESH_INTERVAL);
+    }
     
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
   }, [mailbox, autoRefresh]);
   

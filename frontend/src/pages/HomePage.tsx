@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import EmailList from '../components/EmailList';
 import { MailboxContext } from '../contexts/MailboxContext';
-import { getEmails } from '../utils/api';
 import Container from '../components/Container';
 
 // 添加结构化数据组件
@@ -40,73 +39,13 @@ const HomePage: React.FC = () => {
     mailbox, 
     isLoading, 
     emails, 
-    setEmails, 
     selectedEmail, 
     setSelectedEmail, 
-    isEmailsLoading, 
-    setIsEmailsLoading, 
-    autoRefresh,
-    handleMailboxNotFound
+    isEmailsLoading
   } = useContext(MailboxContext);
   
   // 使用ref来跟踪是否已经处理过404错误
   const handlingNotFoundRef = useRef(false);
-  
-  // 获取邮件列表
-  useEffect(() => {
-    if (!mailbox) return;
-    
-    const fetchEmails = async () => {
-      // 如果正在处理404错误，则跳过
-      if (handlingNotFoundRef.current) return;
-      
-      try {
-        setIsEmailsLoading(true);
-        const result = await getEmails(mailbox.address);
-        setIsEmailsLoading(false);
-        
-        if (result.success) {
-          setEmails(result.emails);
-        } else if (result.notFound) {
-          // 设置标志，防止循环调用
-          handlingNotFoundRef.current = true;
-          
-          // 如果邮箱不存在，清除本地缓存并创建新邮箱
-          try {
-            if (typeof handleMailboxNotFound === 'function') {
-              await handleMailboxNotFound();
-            } else {
-              // 如果handleMailboxNotFound不是函数，则手动清除缓存并刷新页面
-              localStorage.removeItem('tempMailbox');
-              localStorage.removeItem(`emailCache_${mailbox.address}`);
-              window.location.href = '/';
-            }
-          } catch (error) {
-            // 出错时也手动清除缓存并刷新页面
-            localStorage.removeItem('tempMailbox');
-            localStorage.removeItem(`emailCache_${mailbox.address}`);
-            window.location.href = '/';
-          }
-        }
-      } catch (error) {
-        setIsEmailsLoading(false);
-      }
-    };
-    
-    fetchEmails();
-    
-    // 自动刷新
-    let intervalId: number | undefined;
-    if (autoRefresh) {
-      intervalId = window.setInterval(fetchEmails, 10000); // 每10秒刷新一次
-    }
-    
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [mailbox, autoRefresh, setEmails, setIsEmailsLoading]);
   
   if (isLoading) {
     return (
