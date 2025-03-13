@@ -83,7 +83,8 @@ ZMAIL consists of two parts that need to be deployed separately:
     </li>
     <li>Configure environment variables:
       <ul>
-        <li><code>API_BASE_URL</code>: Your Worker API base URL (e.g., <code>https://api.mdzz.uk</code>)</li>
+        <li><code>VITE_API_BASE_URL</code>: Your Worker API base URL (e.g., <code>https://api.mdzz.uk</code>)</li>
+         <li><code>VITE_EMAIL_DOMAIN</code>: Your Domain (e.g., <code>mdzz.uk</code>)</li>
       </ul>
     </li>
     <li>Click "Save and Deploy"</li>

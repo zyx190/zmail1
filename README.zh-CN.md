@@ -83,7 +83,8 @@ ZMAIL 由前端和后端两部分组成，需要分别部署：
     </li>
     <li>配置环境变量:
       <ul>
-        <li><code>API_BASE_URL</code>: 您的Worker API基础URL (例如: <code>https://api.mdzz.uk</code>)</li>
+        <li><code>VITE_API_BASE_URL</code>: 您的Worker API基础URL (例如: <code>https://api.mdzz.uk</code>)</li>
+         <li><code>VITE_EMAIL_DOMAIN</code>: 您的域名 (例如: <code>mdzz.uk</code>)</li>
       </ul>
     </li>
     <li>点击"保存并部署"</li>
