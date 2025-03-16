@@ -1,10 +1,12 @@
-# <div align="center">🚀 ZMAIL - 24-hour Anonymous Email Service</div>
+# <div align="center">🚀 ZMAIL - 24-hour Temporary Email Service</div>
 
 <div align="center">
   <p>
     <strong>English</strong> | <a href="./README.zh-CN.md">中文</a>
   </p>
 
+  <p>If you find this project helpful, please consider giving it a ⭐️ Star ⭐️. Your support is greatly appreciated!</p>
+  
   <img src="frontend/public/favicon.svg" alt="ZMAIL Logo" width="120" height="120" style="background-color: #4f46e5; padding: 20px; border-radius: 12px; margin: 20px 0;">
   
   <h3>💌 Secure, Simple, Disposable Email Service</h3>
@@ -22,6 +24,28 @@
       <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare" />
     </a>
   </div>
+</div>
+
+---
+
+## 📹 Video Tutorial
+
+<div align="center">
+  <a href="https://youtu.be/domoWldyXrc?si=9l3JN5AbtiaTS3_L" target="_blank">
+    <img src="https://img.shields.io/badge/Watch_YouTube_Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube Tutorial" width="250" />
+  </a>
+</div>
+
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+  <p>📺 The complete video tutorial covers:</p>
+  <ol>
+    <li>Project introduction and feature demonstration</li>
+    <li>Detailed steps for frontend deployment to Cloudflare Pages</li>
+    <li>Detailed steps for backend deployment to Cloudflare Workers</li>
+    <li>Configuring Cloudflare Email routing</li>
+    <li>Setting up environment variables and database</li>
+  </ol>
+  <p>👉 <a href="https://youtu.be/domoWldyXrc?si=9l3JN5AbtiaTS3_L" target="_blank" style="color: #4f46e5;">Click here to watch the full tutorial</a></p>
 </div>
 
 ---
@@ -195,6 +219,17 @@ yarn deploy
 ## 👥 Contributing
 
 Contributions via Pull Requests or Issues are welcome!
+
+## ⭐ Support This Project
+
+<div align="center">
+  <p>If this project has been helpful to you, or if you like it, please give it a Star ⭐️</p>
+  <p>Your support motivates me to make continuous improvements!</p>
+  
+  <a href="https://github.com/zaunist/zmail">
+    <img src="https://img.shields.io/github/stars/zaunist/zmail?style=social" alt="GitHub stars" />
+  </a>
+</div>
 
 ## 📄 License
 

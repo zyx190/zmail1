@@ -1,10 +1,12 @@
-# <div align="center">🚀 ZMAIL - 24小时匿名邮箱服务</div>
+# <div align="center">🚀 ZMAIL - 24小时临时邮箱服务</div>
 
 <div align="center">
   <p>
     <a href="./README.md">English</a> | <strong>中文</strong>
   </p>
 
+  <p>如果这个项目对您有帮助，请考虑给它一个 ⭐️ Star ⭐️，这将是对我最大的鼓励！</p>
+  
   <img src="frontend/public/favicon.svg" alt="ZMAIL Logo" width="120" height="120" style="background-color: #4f46e5; padding: 20px; border-radius: 12px; margin: 20px 0;">
   
   <h3>💌 安全、简单、即用即走的临时邮箱服务</h3>
@@ -22,6 +24,28 @@
       <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare" />
     </a>
   </div>
+</div>
+
+---
+
+## 📹 视频教程
+
+<div align="center">
+  <a href="https://youtu.be/domoWldyXrc?si=9l3JN5AbtiaTS3_L" target="_blank">
+    <img src="https://img.shields.io/badge/观看_YouTube_视频教程-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube 视频教程" width="250" />
+  </a>
+</div>
+
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+  <p>📺 完整视频教程包含以下内容：</p>
+  <ol>
+    <li>项目介绍与功能演示</li>
+    <li>前端部署到 Cloudflare Pages 的详细步骤</li>
+    <li>后端部署到 Cloudflare Workers 的详细步骤</li>
+    <li>配置 Cloudflare Email 路由</li>
+    <li>设置环境变量与数据库</li>
+  </ol>
+  <p>👉 <a href="https://youtu.be/domoWldyXrc?si=9l3JN5AbtiaTS3_L" target="_blank" style="color: #4f46e5;">点击此处观看完整视频教程</a></p>
 </div>
 
 ---
@@ -195,6 +219,17 @@ yarn deploy
 ## 👥 贡献指南
 
 欢迎提交Pull Request或Issue来改进这个项目！
+
+## ⭐ 支持项目
+
+<div align="center">
+  <p>如果您觉得这个项目对您有所帮助，或者您喜欢这个项目，请给它一个 Star ⭐️</p>
+  <p>您的支持是我持续改进的动力！</p>
+  
+  <a href="https://github.com/zaunist/zmail">
+    <img src="https://img.shields.io/github/stars/zaunist/zmail?style=social" alt="GitHub stars" />
+  </a>
+</div>
 
 ## 📄 许可证
 
