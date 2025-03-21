@@ -30,6 +30,15 @@ const Footer: React.FC = () => {
               <i className="fab fa-youtube mr-1"></i>
               {t('common.youtube')}
             </a>
+            <a 
+              href="https://xugou.mdzz.uk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              <i className="fas fa-chart-line mr-1"></i>
+              {t('common.xugouMonitor')}
+            </a>
           </div>
         </div>
       </Container>

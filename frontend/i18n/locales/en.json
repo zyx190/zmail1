@@ -21,7 +21,8 @@
     "unknown": "Unknown",
     "empty": "No data",
     "blog": "Blog",
-    "youtube": "YouTube"
+    "youtube": "YouTube",
+    "xugouMonitor": "Xugou Monitor"
   },
   "mailbox": {
     "createRandom": "Create Random Mailbox",
