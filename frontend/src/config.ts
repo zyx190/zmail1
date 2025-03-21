@@ -7,5 +7,5 @@ export const EMAIL_DOMAIN = import.meta.env.VITE_EMAIL_DOMAIN || 'mdzz.uk';
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.mail.mdzz.uk';
 
 // 其他配置
-export const DEFAULT_AUTO_REFRESH = true;
+export const DEFAULT_AUTO_REFRESH = false;
 export const AUTO_REFRESH_INTERVAL = 10000; // 10秒 
