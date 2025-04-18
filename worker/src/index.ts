@@ -43,7 +43,6 @@ export default {
   // 处理邮件
   async email(message: any, env: Env, ctx: ExecutionContext): Promise<void> {
     try {
-      await initializeDatabase(env.DB);
       await handleEmail(message, env);
     } catch (error) {
       console.error('处理邮件失败:', error);
@@ -54,7 +53,6 @@ export default {
   // 定时任务 - 每小时清理过期邮箱以及过期邮件和已被阅读的邮件
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     try {
-      await initializeDatabase(env.DB);
       const deleted = await cleanupExpiredMailboxes(env.DB);
       console.log(`已清理 ${deleted} 个过期邮箱`);
       const deletedMail = await cleanupExpiredMails(env.DB);

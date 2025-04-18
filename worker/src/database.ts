@@ -7,8 +7,7 @@ import {
   EmailListItem,
   Attachment,
   AttachmentListItem,
-  SaveAttachmentParams,
-  AttachmentChunk
+  SaveAttachmentParams
 } from './types';
 import { 
   generateId, 

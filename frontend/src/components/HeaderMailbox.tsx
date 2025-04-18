@@ -6,6 +6,7 @@ interface HeaderMailboxProps {
   mailbox: Mailbox | null;
   onMailboxChange: (mailbox: Mailbox) => void;
   domain: string;
+  domains: string[];
   isLoading: boolean;
 }
 
@@ -13,11 +14,13 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   mailbox, 
   onMailboxChange,
   domain,
+  domains,
   isLoading
 }) => {
   const { t } = useTranslation();
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customAddress, setCustomAddress] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState(domain);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [showCopyTooltip, setShowCopyTooltip] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
@@ -29,6 +32,11 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   const refreshSuccessTimeoutRef = useRef<number | null>(null);
   const successMessageTimeoutRef = useRef<number | null>(null);
   const errorMessageTimeoutRef = useRef<number | null>(null);
+  
+  // 当props中的domain变化时更新selectedDomain
+  useEffect(() => {
+    setSelectedDomain(domain);
+  }, [domain]);
   
   // 清除提示的定时器
   useEffect(() => {
@@ -55,7 +63,7 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
     // 清除之前的错误信息
     setCopyError(null);
     
-    const fullAddress = mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${domain}`;
+    const fullAddress = mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${selectedDomain}`;
     navigator.clipboard.writeText(fullAddress)
       .then(() => {
         // 显示复制成功提示
@@ -175,7 +183,7 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
   
   // 移动设备上的邮箱地址显示
   const renderMobileAddress = () => {
-    const fullAddress = mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${domain}`;
+    const fullAddress = mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${selectedDomain}`;
     const [username, domainPart] = fullAddress.split('@');
     
     // 如果用户名太长，截断显示
@@ -186,6 +194,11 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
         {displayUsername}@{domainPart}
       </code>
     );
+  };
+  
+  // 切换域名
+  const handleDomainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDomain(e.target.value);
   };
   
   // 按钮基础样式
@@ -215,8 +228,17 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
                 disabled={isActionLoading}
                 autoFocus
               />
-              <span className="px-2 py-1 text-sm border-y border-r rounded-r-md bg-muted">
-                @{domain}
+              <span className="flex items-center px-2 py-1 text-sm border-y border-r rounded-r-md bg-muted">
+                @
+                <select 
+                  value={selectedDomain}
+                  onChange={handleDomainChange}
+                  className="bg-transparent border-none focus:outline-none"
+                >
+                  {domains.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
               </span>
             </div>
             <button
@@ -252,21 +274,29 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
         </form>
       ) : (
         <>
-          {/* 桌面版显示 */}
-          <div className="hidden md:flex items-center flex-col">
-            {/* 邮箱地址和操作按钮 */}
-            <div className="flex items-center">
-              <code className="px-3 py-1.5 text-sm font-medium">
-                {mailbox.address.includes('@') ? mailbox.address : `${mailbox.address}@${domain}`}
+          <div className="flex items-center">
+            {/* 电脑端邮箱地址显示 */}
+            <div className="hidden sm:flex items-center">
+              <code className="bg-muted px-2 py-1 rounded text-sm font-medium">
+                {mailbox.address}@
+                <select 
+                  value={selectedDomain}
+                  onChange={handleDomainChange}
+                  className="bg-transparent border-none focus:outline-none px-0 py-0 font-medium"
+                >
+                  {domains.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
               </code>
               
               <div className="relative">
-                <button
-                  onClick={copyToClipboard}
+              <button 
+                onClick={copyToClipboard}
                   className={`w-8 h-8 ${copyButtonClass}`}
                   aria-label={t('common.copy')}
                   title={t('common.copy')}
-                >
+              >
                   <i className="fas fa-copy text-sm"></i>
                 </button>
                 
@@ -323,12 +353,12 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
               {renderMobileAddress()}
               
               <div className="relative">
-                <button
-                  onClick={copyToClipboard}
+              <button 
+                onClick={copyToClipboard}
                   className={`w-6 h-6 ${copyButtonClass}`}
                   aria-label={t('common.copy')}
                   title={t('common.copy')}
-                >
+              >
                   <i className="fas fa-copy text-xs"></i>
                 </button>
                 
@@ -340,43 +370,43 @@ const HeaderMailbox: React.FC<HeaderMailboxProps> = ({
                   </div>
                 )}
               </div>
-              
-              <div className="relative">
-                <button
-                  onClick={handleRefreshMailbox}
-                  className={`w-6 h-6 ${refreshButtonClass}`}
-                  disabled={isActionLoading}
-                  title={t('mailbox.refresh')}
-                >
-                  <i className="fas fa-sync-alt text-xs"></i>
-                </button>
-                
-                {/* 更新成功提示 */}
-                {showRefreshSuccess && (
-                  <div className="absolute top-7 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs py-1 px-2 rounded shadow-lg whitespace-nowrap z-10">
-                    {t('mailbox.refreshSuccess')}
-                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-primary rotate-45"></div>
-                  </div>
-                )}
-              </div>
-              
-              <button
-                onClick={() => setIsCustomMode(true)}
-                className={`w-6 h-6 ${customizeButtonClass}`}
-                disabled={isActionLoading}
-                title={t('mailbox.customize')}
-              >
-                <i className="fas fa-edit text-xs"></i>
-              </button>
             </div>
             
-            {/* 错误信息显示 */}
-            {(copyError || refreshError) && (
+            <div className="relative">
+              <button
+                onClick={handleRefreshMailbox}
+                  className={`w-6 h-6 ${refreshButtonClass}`}
+                disabled={isActionLoading}
+                  title={t('mailbox.refresh')}
+              >
+                  <i className="fas fa-sync-alt text-xs"></i>
+              </button>
+              
+                {/* 更新成功提示 */}
+              {showRefreshSuccess && (
+                  <div className="absolute top-7 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs py-1 px-2 rounded shadow-lg whitespace-nowrap z-10">
+                  {t('mailbox.refreshSuccess')}
+                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-primary rotate-45"></div>
+                </div>
+              )}
+            </div>
+    
+          <button
+            onClick={() => setIsCustomMode(true)}
+                className={`w-6 h-6 ${customizeButtonClass}`}
+            disabled={isActionLoading}
+                title={t('mailbox.customize')}
+          >
+                <i className="fas fa-edit text-xs"></i>
+          </button>
+    </div>
+      
+      {/* 错误信息显示 */}
+      {(copyError || refreshError) && (
               <div className="text-red-500 text-xs mt-1">
-                {copyError || refreshError}
-              </div>
+          {copyError || refreshError}
+        </div>
             )}
-          </div>
         </>
       )}
     </div>

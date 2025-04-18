@@ -83,37 +83,7 @@
 
 ## 🚀 Quick Deployment
 
-ZMAIL consists of two parts that need to be deployed separately:
-
-### 🖥️ Frontend Deployment
-
-<div align="center">
-  <h3>1️⃣ Deploy Frontend to Cloudflare Pages</h3>
-  <a href="https://dash.cloudflare.com/?to=/:account/pages/new/import-git" target="_blank">
-    <img src="https://img.shields.io/badge/Deploy_to_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
-  </a>
-</div>
-
-<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
-  <ol>
-    <li>Click the "Deploy to Cloudflare Pages" button</li>
-    <li>Connect your GitHub account and select this repository</li>
-    <li>Configure build settings:
-      <ul>
-        <li>Build command: <code>yarn build</code></li>
-        <li>Build output directory: <code>dist</code></li>
-        <li>Root directory (Advanced) -> Path: <code>frontend</code></li>
-      </ul>
-    </li>
-    <li>Configure environment variables:
-      <ul>
-        <li><code>VITE_API_BASE_URL</code>: Your Worker API base URL (e.g., <code>https://api.mdzz.uk</code>)</li>
-         <li><code>VITE_EMAIL_DOMAIN</code>: Your Domain (e.g., <code>mdzz.uk</code>)</li>
-      </ul>
-    </li>
-    <li>Click "Save and Deploy"</li>
-  </ol>
-</div>
+ZMAIL consists of two parts that need to be deployed separately, deploy the backend first, then the frontend:
 
 ### ⚙️ Backend Deployment
 
@@ -146,6 +116,38 @@ ZMAIL consists of two parts that need to be deployed separately:
       </ul>
     </li>
     <li>Click "Deploy"</li>
+  </ol>
+</div>
+
+---
+
+### 🖥️ Frontend Deployment
+
+<div align="center">
+  <h3>1️⃣ Deploy Frontend to Cloudflare Pages</h3>
+  <a href="https://dash.cloudflare.com/?to=/:account/pages/new/import-git" target="_blank">
+    <img src="https://img.shields.io/badge/Deploy_to_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
+  </a>
+</div>
+
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+  <ol>
+    <li>Click the "Deploy to Cloudflare Pages" button</li>
+    <li>Connect your GitHub account and select this repository</li>
+    <li>Configure build settings:
+      <ul>
+        <li>Build command: <code>yarn build</code></li>
+        <li>Build output directory: <code>dist</code></li>
+        <li>Root directory (Advanced) -> Path: <code>frontend</code></li>
+      </ul>
+    </li>
+    <li>Configure environment variables:
+      <ul>
+        <li><code>VITE_API_BASE_URL</code>: Your Worker API base URL (e.g., <code>https://api.mdzz.uk</code>)</li>
+         <li><code>VITE_EMAIL_DOMAIN</code>: Your domain list, separated by ',' (e.g., <code>mdzz.uk,zaunist.com</code>)</li>
+      </ul>
+    </li>
+    <li>Click "Save and Deploy"</li>
   </ol>
 </div>
 

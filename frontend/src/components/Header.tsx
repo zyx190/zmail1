@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import HeaderMailbox from './HeaderMailbox';
 import Container from './Container';
-import { EMAIL_DOMAIN } from '../config';
+import { EMAIL_DOMAINS, DEFAULT_EMAIL_DOMAIN } from '../config';
 
 interface HeaderProps {
   mailbox: Mailbox | null;
@@ -32,7 +32,8 @@ const Header: React.FC<HeaderProps> = ({
               <HeaderMailbox 
                 mailbox={mailbox} 
                 onMailboxChange={onMailboxChange}
-                domain={EMAIL_DOMAIN}
+                domain={DEFAULT_EMAIL_DOMAIN}
+                domains={EMAIL_DOMAINS}
                 isLoading={isLoading}
               />
               <div className="ml-3 pl-3 border-l border-muted-foreground/20 flex items-center">

@@ -83,37 +83,7 @@
 
 ## 🚀 快速部署
 
-ZMAIL 由前端和后端两部分组成，需要分别部署：
-
-### 🖥️ 前端部署步骤
-
-<div align="center">
-  <h3>1️⃣ 部署前端到 Cloudflare Pages</h3>
-  <a href="https://dash.cloudflare.com/?to=/:account/pages/new/import-git" target="_blank">
-    <img src="https://img.shields.io/badge/部署前端到_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
-  </a>
-</div>
-
-<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
-  <ol>
-    <li>点击"部署前端到 Cloudflare Pages"按钮</li>
-    <li>连接您的GitHub账户并选择导入此仓库</li>
-    <li>设置构建配置:
-      <ul>
-        <li>构建命令: <code>yarn build</code></li>
-        <li>构建输出目录: <code>dist</code></li>
-        <li>根目录（高级）-> 路径: <code>frontend</code></li>
-      </ul>
-    </li>
-    <li>配置环境变量:
-      <ul>
-        <li><code>VITE_API_BASE_URL</code>: 您的Worker API基础URL (例如: <code>https://api.mdzz.uk</code>)</li>
-         <li><code>VITE_EMAIL_DOMAIN</code>: 您的域名 (例如: <code>mdzz.uk</code>)</li>
-      </ul>
-    </li>
-    <li>点击"保存并部署"</li>
-  </ol>
-</div>
+ZMAIL 由前端和后端两部分组成，需要先部署后端，然后再部署前端：
 
 ### ⚙️ 后端部署步骤
 
@@ -150,6 +120,37 @@ ZMAIL 由前端和后端两部分组成，需要分别部署：
 </div>
 
 ---
+
+### 🖥️ 前端部署步骤
+
+<div align="center">
+  <h3>1️⃣ 部署前端到 Cloudflare Pages</h3>
+  <a href="https://dash.cloudflare.com/?to=/:account/pages/new/import-git" target="_blank">
+    <img src="https://img.shields.io/badge/部署前端到_Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy Frontend to Cloudflare Pages" width="300" />
+  </a>
+</div>
+
+<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+  <ol>
+    <li>点击"部署前端到 Cloudflare Pages"按钮</li>
+    <li>连接您的GitHub账户并选择导入此仓库</li>
+    <li>设置构建配置:
+      <ul>
+        <li>构建命令: <code>yarn build</code></li>
+        <li>构建输出目录: <code>dist</code></li>
+        <li>根目录（高级）-> 路径: <code>frontend</code></li>
+      </ul>
+    </li>
+    <li>配置环境变量:
+      <ul>
+        <li><code>VITE_API_BASE_URL</code>: 您的Worker API基础URL (例如: <code>https://api.mdzz.uk</code>)</li>
+         <li><code>VITE_EMAIL_DOMAIN</code>: 您的域名列表，使用','分割 (例如: <code>mdzz.uk,zaunist.com</code>)</li>
+      </ul>
+    </li>
+    <li>点击"保存并部署"</li>
+  </ol>
+</div>
+
 
 ## 💻 本地开发
 

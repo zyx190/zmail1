@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { Env, SendEmailParams, ParsedEmail } from './types';
+import { Env} from './types';
 import { 
   createMailbox, 
   getMailbox, 
@@ -11,8 +11,7 @@ import {
   getAttachments,
   getAttachment
 } from './database';
-import { generateRandomAddress, isValidEmailAddress, sendEmail } from './utils';
-import { parseRawEmail } from './email-builder';
+import { generateRandomAddress, } from './utils';
 
 // 创建 Hono 应用
 const app = new Hono<{ Bindings: Env }>();
@@ -30,123 +29,6 @@ app.get('/', (c) => {
   return c.json({ status: 'ok', message: '临时邮箱系统API正常运行' });
 });
 
-// 发送邮件API，暂时不用
-app.post('/api/send-email', async (c) => {
-  try {
-    const body = await c.req.json() as SendEmailParams;
-    
-    // 验证必要参数
-    if (!body.fromAddress || typeof body.fromAddress !== 'string') {
-      return c.json({ success: false, error: '发件人地址不能为空' }, 400);
-    }
-    
-    if (!body.toAddress || typeof body.toAddress !== 'string') {
-      return c.json({ success: false, error: '收件人地址不能为空' }, 400);
-    }
-    
-    if (!isValidEmailAddress(body.toAddress)) {
-      return c.json({ success: false, error: '收件人邮箱地址格式无效' }, 400);
-    }
-    
-    if (!body.subject || typeof body.subject !== 'string') {
-      return c.json({ success: false, error: '邮件主题不能为空' }, 400);
-    }
-    
-    if (!body.textContent && !body.htmlContent) {
-      return c.json({ success: false, error: '邮件内容不能为空' }, 400);
-    }
-    
-    // // 查找发件人邮箱是否存在
-    // const mailbox = await getMailbox(c.env.DB, body.fromAddress);
-    
-    // if (!mailbox) {
-    //   return c.json({ success: false, error: '发件人邮箱不存在' }, 404);
-    // }
-    
-    // 发送邮件
-    const result = await sendEmail(
-      body.fromAddress,
-      body.toAddress,
-      body.toName || '',
-      body.subject,
-      body.textContent || '',
-      body.htmlContent || ''
-    );
-    
-    if (result.success) {
-      return c.json({ 
-        success: true, 
-        message: '邮件发送成功'
-      });
-    } else {
-      return c.json({ 
-        success: false, 
-        error: result.error || '邮件发送失败'
-      }, 500);
-    }
-  } catch (error) {
-    console.error('发送邮件失败:', error);
-    return c.json({ 
-      success: false, 
-      error: '发送邮件失败',
-      message: error instanceof Error ? error.message : String(error)
-    }, 500);
-  }
-});
-
-// 接收原始邮件并解析，用于测试解析邮件功能
-app.post('/api/parse-email', async (c) => {
-  try {
-    console.log('接收到解析邮件请求');
-    
-    // 获取请求体中的原始邮件内容
-    const body = await c.req.text();
-    
-    if (!body) {
-      console.log('未提供邮件内容');
-      return c.json({ success: false, error: '未提供邮件内容' }, 400);
-    }
-    
-    console.log(`接收到邮件内容，长度: ${body.length} 字节`);
-    
-    // 将文本内容转换为ArrayBuffer
-    const encoder = new TextEncoder();
-    const rawEmail = encoder.encode(body).buffer;
-    
-    // 使用PostalMime解析邮件
-    const parsedEmail = await parseRawEmail(rawEmail) as ParsedEmail;
-    
-    console.log('邮件解析成功:', {
-      subject: parsedEmail.subject,
-      from: parsedEmail.from,
-      to: parsedEmail.to?.length || 0,
-      hasText: !!parsedEmail.text,
-      hasHtml: !!parsedEmail.html,
-      attachments: parsedEmail.attachments?.length || 0
-    });
-    
-    // 返回解析结果
-    return c.json({ 
-      success: true, 
-      email: {
-        subject: parsedEmail.subject,
-        from: parsedEmail.from,
-        to: parsedEmail.to,
-        text: parsedEmail.text,
-        html: parsedEmail.html,
-        hasAttachments: !!parsedEmail.attachments?.length,
-        attachmentsCount: parsedEmail.attachments?.length || 0
-      }
-    });
-  } catch (error) {
-    console.error('解析邮件失败:', error);
-    return c.json({ 
-      success: false, 
-      error: '解析邮件失败',
-      message: error instanceof Error ? error.message : String(error)
-    }, 500);
-  }
-});
 
 // 创建邮箱
 app.post('/api/mailboxes', async (c) => {
@@ -364,15 +246,6 @@ app.delete('/api/emails/:id', async (c) => {
       message: error instanceof Error ? error.message : String(error)
     }, 500);
   }
-});
-
-// 调试端点
-app.get('/api/debug/db', (c) => {
-  return c.json({
-    dbDefined: !!c.env.DB,
-    dbType: typeof c.env.DB,
-    dbMethods: c.env.DB ? Object.keys(c.env.DB) : []
-  });
 });
 
 export default app;
