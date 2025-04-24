@@ -113,6 +113,7 @@ ZMAIL 由前端和后端两部分组成，需要先部署后端，然后再部�
     <li>配置Email路由:
       <ul>
         <li>在Cloudflare控制面板中设置Email路由，将邮件转发到您的Worker</li>
+        <li>如果你想配置多个域名邮箱，那么就在CloudFlare后台将每一个域名都设置邮件转发到上述 worker 中</li>
       </ul>
     </li>
     <li>点击"部署"</li>

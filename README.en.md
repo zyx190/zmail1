@@ -113,6 +113,7 @@ ZMAIL consists of two parts that need to be deployed separately, deploy the back
     <li>Configure Email routing:
       <ul>
         <li>Set up Email routing in the Cloudflare dashboard to forward emails to your Worker</li>
+        <li>If you want to configure multiple domain emails, set up email forwarding for each domain to the worker in the CloudFlare dashboard</li>
       </ul>
     </li>
     <li>Click "Deploy"</li>
