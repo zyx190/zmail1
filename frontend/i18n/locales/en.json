@@ -43,6 +43,8 @@
     "createFailed": "Failed to create mailbox",
     "deleteSuccess": "Mailbox deleted successfully",
     "deleteFailed": "Failed to delete mailbox",
+    "delete": "Delete Mailbox",
+    "confirmDelete": "Are you sure you want to delete this mailbox? A new anonymous mailbox will be created immediately.",
     "invalidAddress": "Invalid email address",
     "addressExists": "Email address already exists",
     "refresh": "Change Address",

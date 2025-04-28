@@ -43,6 +43,8 @@
     "createFailed": "邮箱创建失败",
     "deleteSuccess": "邮箱删除成功",
     "deleteFailed": "邮箱删除失败",
+    "delete": "删除邮箱",
+    "confirmDelete": "确定要删除当前邮箱吗？删除后将立即创建新的匿名邮箱。",
     "invalidAddress": "无效的邮箱地址",
     "addressExists": "邮箱地址已存在",
     "refresh": "更换邮箱",
