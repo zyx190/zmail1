@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MailboxContext } from '../contexts/MailboxContext';
 import EmailDetail from './EmailDetail';
@@ -17,7 +17,8 @@ const EmailList: React.FC<EmailListProps> = ({
   isLoading 
 }) => {
   const { t } = useTranslation();
-  const { autoRefresh, setAutoRefresh, refreshEmails, mailbox } = useContext(MailboxContext);
+  const { autoRefresh, setAutoRefresh, refreshEmails, mailbox, deleteMailbox } = useContext(MailboxContext);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
@@ -68,7 +69,20 @@ const EmailList: React.FC<EmailListProps> = ({
     setAutoRefresh(!autoRefresh);
   };
   
-  if (isLoading) {
+  const handleDeleteMailbox = async () => {
+    if (window.confirm(t('mailbox.confirmDelete'))) {
+      setIsDeleting(true);
+      try {
+        await deleteMailbox();
+      } catch (error) {
+        console.error('Error deleting mailbox:', error);
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+  
+  if (isLoading || isDeleting) {
     return (
       <div className="border rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
@@ -116,6 +130,16 @@ const EmailList: React.FC<EmailListProps> = ({
           <div className="flex justify-between items-center mt-1">
             <span>{t('mailbox.timeLeft')}:</span>
             <span>{calculateTimeLeft(mailbox.expiresAt)}</span>
+          </div>
+          <div className="flex justify-end mt-2">
+            <button
+              onClick={handleDeleteMailbox}
+              className="text-red-500 hover:text-red-600 text-xs flex items-center gap-1"
+              title={t('mailbox.delete')}
+            >
+              <i className="fas fa-trash-alt"></i>
+              <span>{t('mailbox.delete')}</span>
+            </button>
           </div>
         </div>
       )}

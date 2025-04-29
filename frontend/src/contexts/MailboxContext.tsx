@@ -4,7 +4,8 @@ import {
   getMailboxFromLocalStorage, 
   saveMailboxToLocalStorage,
   removeMailboxFromLocalStorage,
-  getEmails
+  getEmails,
+  deleteMailbox as apiDeleteMailbox
 } from '../utils/api';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_AUTO_REFRESH, AUTO_REFRESH_INTERVAL } from '../config';
@@ -31,7 +32,7 @@ interface MailboxContextType {
   autoRefresh: boolean;
   setAutoRefresh: (autoRefresh: boolean) => void;
   createNewMailbox: () => Promise<void>;
-  deleteMailbox: () => void;
+  deleteMailbox: () => Promise<void>;
   refreshEmails: () => Promise<void>;
   emailCache: EmailCache;
   addToEmailCache: (emailId: string, email: Email, attachments: any[]) => void;
@@ -54,7 +55,7 @@ export const MailboxContext = createContext<MailboxContextType>({
   autoRefresh: DEFAULT_AUTO_REFRESH,
   setAutoRefresh: () => {},
   createNewMailbox: async () => {},
-  deleteMailbox: () => {},
+  deleteMailbox: async () => {},
   refreshEmails: async () => {},
   emailCache: {},
   addToEmailCache: () => {},
@@ -152,12 +153,64 @@ export const MailboxProvider: React.FC<MailboxProviderProps> = ({ children }) =>
   };
   
   // 删除邮箱
-  const deleteMailbox = () => {
-    setMailbox(null);
-    setEmails([]);
-    setSelectedEmail(null);
-    removeMailboxFromLocalStorage();
-    createNewMailbox();
+  const deleteMailbox = async () => {
+    if (!mailbox) return;
+    
+    try {
+      // 清除之前的错误和成功信息
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      
+      // 调用API删除邮箱
+      const result = await apiDeleteMailbox(mailbox.address);
+      
+      if (result.success) {
+        // 显示成功信息
+        setSuccessMessage(t('mailbox.deleteSuccess'));
+        
+        // 清除本地数据
+        setMailbox(null);
+        setEmails([]);
+        setSelectedEmail(null);
+        removeMailboxFromLocalStorage();
+        clearEmailCache();
+        
+        // 3秒后清除成功信息
+        if (successTimeoutRef.current) {
+          window.clearTimeout(successTimeoutRef.current);
+        }
+        successTimeoutRef.current = window.setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+        
+        // 创建新邮箱
+        await createNewMailbox();
+      } else {
+        // 显示错误信息
+        setErrorMessage(t('mailbox.deleteFailed'));
+        
+        // 3秒后清除错误信息
+        if (errorTimeoutRef.current) {
+          window.clearTimeout(errorTimeoutRef.current);
+        }
+        errorTimeoutRef.current = window.setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error deleting mailbox:', error);
+      
+      // 显示错误信息
+      setErrorMessage(t('mailbox.deleteFailed'));
+      
+      // 3秒后清除错误信息
+      if (errorTimeoutRef.current) {
+        window.clearTimeout(errorTimeoutRef.current);
+      }
+      errorTimeoutRef.current = window.setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
+    }
   };
   
   // 刷新邮件列表
